@@ -14,11 +14,6 @@ function LoadItPlugin(element) {
     this.DEFAULT_PREFIX = 'data-loadit-';
     this.EXCLUDED_ATTRIBUTES = ['url', 'loading-class', 'content'];
 
-    this.init();
-    this._get_query_string(element);
-    this._get_url();
-    this._get_content_placement();
-    this._get_loading_class();
 }
 
 LoadItPlugin.prototype.init = function() {
@@ -26,17 +21,43 @@ LoadItPlugin.prototype.init = function() {
     // Initialize the plugin
 
     // variables
-    var query
+    var content_placement
+        ,loading_class
+        ,query
         ,url;
 
     // get url from the element's url data attribute
     url = this._get_url();
 
+    // get the content placement behaviour
+    content_placement = this._get_content_placement();
+
     // create the GET query string
     query = this._get_query_string(this);
 
-    // TODO this is probably better as $.ajax()
-    this.$element.load(url + query);
+    // get the loading class to apply while waiting for a response and add it to the element
+    loading_class = this._get_loading_class();
+    this.$element.addClass(loading_class);
+
+    // get the content
+    $.ajax({
+        url: url + query
+        ,context: this.element
+        ,success: function(data) {
+
+            // place the content where defined
+            if (content_placement === 'replace' || !$(this).children().length) {
+                $(this).html(data);
+            } else if (content_placement === 'append') {
+                $(data).insertAfter($(this).children().last());
+            } else if (content_placement === 'prepend') {
+                $(data).insertBefore($(this).children().first());
+            }
+
+            // remove the loading class again
+            this.removeClass(loading_class);
+        }
+    });
 };
 
 LoadItPlugin.prototype._get_content_placement = function() {
@@ -49,7 +70,7 @@ LoadItPlugin.prototype._get_content_placement = function() {
         content_placement = 'replace';
     }
 
-    return content_placement
+    return content_placement;
 };
 
 LoadItPlugin.prototype._get_loading_class = function() {
@@ -90,14 +111,14 @@ LoadItPlugin.prototype._get_query_string = function() {
         // then add the attribute to the query string
         if (attribute.name.indexOf(this.DEFAULT_PREFIX) === 0) {
             attname = attribute.name.slice(this.DEFAULT_PREFIX.length);
-            if (this.EXCLUDED_ATTRIBUTES.indexOf(attname) == -1) {
+            if (this.EXCLUDED_ATTRIBUTES.indexOf(attname) === -1) {
                 value = encodeURIComponent(attribute.value);
                 query = query + prefix + attname + '=' + value;
             }
         }
     }
 
-    return query
+    return query;
 };
 
 LoadItPlugin.prototype._get_url = function() {
@@ -114,10 +135,11 @@ LoadItPlugin.prototype._get_url = function() {
 };
 
 (function( $ ) {
-    $.fn['loadit'] = function() {
-        return this.each(function(){
-            $.data(this, 'loadit', new LoadItPlugin(this))
-        })
+    $.fn.loadit = function() {
+        return this.each(function() {
+            var plugin = new LoadItPlugin(this);
+            $.data(this, 'loadit', plugin.init());
+        });
     };
     $(document).ready(function() {
         $('[data-class="loadit"]').loadit();

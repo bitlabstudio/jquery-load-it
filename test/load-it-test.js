@@ -1,4 +1,4 @@
-QUnit.module('Helper methods')
+QUnit.module('Helper methods');
 QUnit.test('Testing the ``_get_content_placement`` method.', function(assert) {
 
     // setting up the element and its attributes
@@ -97,5 +97,69 @@ QUnit.test('Testing the ``_get_url`` method.', function(assert) {
         plugin._get_url()
         ,'example.com'
         ,'The url should be set correctly.'
+    );
+});
+
+QUnit.module('AJAX Tests');
+QUnit.test('Test content is fetched', function (assert) {
+
+    // initialize fake XMLHttpRequest server using sinon.js
+    var server = this.sandbox.useFakeServer()
+        ,element = document.createElement('DIV');
+
+    // setup the response
+    server.respondWith(
+        'GET'                                   // method
+        ,'.'                                    // location
+        ,[200, {'Content-Type': 'text/html'}    // header
+        ,'<p class="newcontent">Content</p>']   // content/body
+    );
+
+    // fire the plugin
+    $(element).loadit();
+
+    // let the server respond
+    server.respond();
+
+    // check if content replaced the html
+    assert.ok(
+        $(element).find('.newcontent').length
+        ,'The element should contain the new content. Instead got: ' + element.outerHTML
+    );
+
+    // make content p elements have different classes
+    $(element).children().each(function() {
+        $(this).removeClass('newcontent').addClass('persistent');
+    });
+    element.setAttribute('data-loadit-content', 'prepend');
+    $(element).loadit();
+    server.respond();
+
+    // check that the new content is prepended
+    assert.ok(
+        $(element).children().first().hasClass('newcontent')
+        ,'The element should be the first in its parent. Instead got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).find('.persistent').length
+        ,'The persistent elements should not have been replaced.'
+    );
+
+    // make content p elements have different classes again
+    $(element).children().each(function() {
+        $(this).removeClass('newcontent').addClass('persistent');
+    });
+    element.setAttribute('data-loadit-content', 'append');
+    $(element).loadit();
+    server.respond();
+
+    // check that the new content is appended
+    assert.ok(
+        $(element).children().last().hasClass('newcontent')
+        ,'The element should be the last in its parent. Instead got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).find('.persistent').length
+        ,'The persistent elements should not have been replaced.'
     );
 });
