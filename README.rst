@@ -11,8 +11,7 @@ But this is no excuse to not optimize your data to respond faster in the first p
 
 TODO / Planned features:
 
-* Implement adding ajax loader class while waiting for response to allow loading animations
-* Implement placement of content via attribute - 'replace', 'append', 'prepend'
+* Test loading class add/remove implementation
 * Implement loadit-header and loadit-footer elements, that are even ignored by replace actions
 * Load more button - calls the same url again and allows extra parameters. Per default 'append's content (see content
   placement).

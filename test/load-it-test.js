@@ -101,7 +101,7 @@ QUnit.test('Testing the ``_get_url`` method.', function(assert) {
 });
 
 QUnit.module('AJAX Tests');
-QUnit.test('Test content is fetched', function (assert) {
+QUnit.test('Test content is fetched and inserted properly', function (assert) {
 
     // initialize fake XMLHttpRequest server using sinon.js
     var server = this.sandbox.useFakeServer()
