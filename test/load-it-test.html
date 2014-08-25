@@ -14,5 +14,17 @@
 </head>
 <body>
 <div id="qunit"></div>
+<!--
+    var loaded = false;
+    $(document).on('scroll', function() {
+        var doctop = $(window).scrollTop();
+        var docbottom = doctop + $(window).height();
+        var etop = $('.scrollme').offset().top;
+        if (etop < docbottom && !loaded) {
+            loaded = true;
+            alert('foo');
+        }
+    })
+-->
 </body>
 </html>

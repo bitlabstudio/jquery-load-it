@@ -9,13 +9,6 @@ will provide a far better experience.
 
 But this is no excuse to not optimize your data to respond faster in the first place ;)
 
-TODO / Planned features:
-
-* Test loading class add/remove implementation
-* Implement loadit-header and loadit-footer elements, that are even ignored by replace actions
-* Load more button - calls the same url again and allows extra parameters. Per default 'append's content (see content
-  placement).
-
 Wishlist / not sure if it's added or really necessary / not sure when it's added, might be a while:
 
 * inserting / showing animation. E.g. using jQuery slide or fade
@@ -23,8 +16,8 @@ Wishlist / not sure if it's added or really necessary / not sure when it's added
   Like when you have a list of avatars, then you may not want to send whole finished templates all the time. It would
   be easier and probably faster to not have the backend render everything if the general layout and template is already
   present. We could just get back a JSON response with  the image URLs and fill them in.
-* automatically reload on a certain action / if a certain input gets changed
 * success / launch callbacks
+* Loading triggers: Automatically reload on a certain action / if a certain input gets changed / scroll / hover / click
 
 Basic Usage
 -----------
@@ -55,3 +48,58 @@ All data attribute options
 Default: 'replace'
 ``data-loadit-loading-class`` - The class name, that is added to the element, when waiting for the content. This way you
 can add your own custom style for loading animations. Default: 'loadit-loading'
+
+
+Header and footer
++++++++++++++++++
+
+If you want, you can define a header and a footer, that will not be replaced when the content is inserted. A header will
+always remain on top of the element, even if the content is prepended. Same behaviour applies to the footer and
+appending.
+
+An example markup could be:
+
+.. code-block:: html
+
+    <div data-class="loadit" data-loadit-url="/mysupercontent/">
+        <div class="loadit-header">
+            <h1>My header headline that will stay on top</h1>
+        </div>
+
+        <!-- Here will the content go -->
+
+        <div class="loadit-footer">
+            <p>This is my super footer text, that will not be replaced.</p>
+        </div>
+    </div>
+
+
+Load more buttons
++++++++++++++++++
+
+You can add a load more button to your footer, that will post to the same view where the content was fetched before, but
+with the addition of sending extra parameters to the view. These extra parameters are defined on the footer element, the
+same way as you did on the parent. Just use ``data-loadit-my-extra-key="myextravalue"`` on the ``loadit-footer`` element
+to send them along with the new request for more content.
+
+A note about the behaviour of the arguments. All data attributes defined by you on the parent element can be overwritten
+on the footer.
+
+To identify the element, that should serve as load more button, you need to add the ``data-class="loadit-morebutton"``
+attribute to it and place it inside the element with ``class="loadit-footer"``.
+
+This could look something like:
+
+.. code-block:: html
+
+    <div data-class="loadit" data-loadit-url="/mysupercontent/" data-loadit-myarg="myval" data-loadit-content="append">
+        <div class="loadit-header">
+            <h1>My header headline that will stay on top</h1>
+        </div>
+
+        <!-- Here will the content go -->
+
+        <div class="loadit-footer" data-loadit-myarg="overwritten">
+            <a href="#" data-class"loadit-morebutton">Load more</a>
+        </div>
+    </div>

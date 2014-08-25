@@ -55,6 +55,8 @@ QUnit.test('Testing the ``_get_query_string`` method.', function(assert) {
     var element = document.createElement('DIV'),
         plugin;
 
+    $(element).html('<div class="loadit-footer" data-loadit-added="differently"></div>')
+
     // attributes, that should not be added to the query
     element.setAttribute('data-not-used-element', 'has the wrong format');
     element.setAttribute('data-loadit-url', 'example.com');
@@ -72,6 +74,11 @@ QUnit.test('Testing the ``_get_query_string`` method.', function(assert) {
     assert.equal(
         plugin._get_query_string()
         ,'?added=added&urlencoded=This%20needs%20urlencoding'
+        ,'A query string with GET paremeters should be created from element: ``' + element.outerHTML + '``'
+    );
+    assert.equal(
+        plugin._get_query_string(true)
+        ,'?added=differently&urlencoded=This%20needs%20urlencoding'
         ,'A query string with GET paremeters should be created from element: ``' + element.outerHTML + '``'
     );
 });
@@ -101,7 +108,7 @@ QUnit.test('Testing the ``_get_url`` method.', function(assert) {
 });
 
 QUnit.module('AJAX Tests');
-QUnit.test('Test content is fetched and inserted properly', function (assert) {
+QUnit.test('Test content is fetched and inserted properly', function(assert) {
 
     // initialize fake XMLHttpRequest server using sinon.js
     var server = this.sandbox.useFakeServer()
@@ -124,7 +131,7 @@ QUnit.test('Test content is fetched and inserted properly', function (assert) {
     // check if content replaced the html
     assert.ok(
         $(element).find('.newcontent').length
-        ,'The element should contain the new content. Instead got: ' + element.outerHTML
+        ,'The element should contain the new content. Got: ' + element.outerHTML
     );
 
     // make content p elements have different classes
@@ -138,7 +145,7 @@ QUnit.test('Test content is fetched and inserted properly', function (assert) {
     // check that the new content is prepended
     assert.ok(
         $(element).children().first().hasClass('newcontent')
-        ,'The element should be the first in its parent. Instead got: ' + element.outerHTML
+        ,'The element should be the first in its parent. Got: ' + element.outerHTML
     );
     assert.ok(
         $(element).find('.persistent').length
@@ -156,10 +163,150 @@ QUnit.test('Test content is fetched and inserted properly', function (assert) {
     // check that the new content is appended
     assert.ok(
         $(element).children().last().hasClass('newcontent')
-        ,'The element should be the last in its parent. Instead got: ' + element.outerHTML
+        ,'The element should be the last in its parent. Got: ' + element.outerHTML
     );
     assert.ok(
         $(element).find('.persistent').length
         ,'The persistent elements should not have been replaced.'
+    );
+
+    // check that the loader class was removed again
+    assert.ok(
+        !$(element).hasClass('loadit-loading')
+        ,'The element should no longer have the loading class: ' + element.outerHTML
+    )
+});
+
+QUnit.test('Test for content that is inserted between header and footer', function(assert) {
+
+    // initialize fake XMLHttpRequest server using sinon.js
+    var server = this.sandbox.useFakeServer()
+        ,element = document.createElement('DIV');
+
+    // add header and footer to the element
+    $(element).html('<div class="loadit-header"></div><div class="loadit-footer"></div>');
+
+    // setup the response
+    server.respondWith(
+        'GET'                                   // method
+        ,'.'                                    // location
+        ,[200, {'Content-Type': 'text/html'}    // header
+            ,'<p class="newcontent">Content</p>']   // content/body
+    );
+
+    // fire the plugin
+    $(element).loadit();
+
+    // let the server respond
+    server.respond();
+
+    // check if content is placed correctly
+    assert.equal(
+        $(element).find('.newcontent').length
+        ,1
+        ,'The element should be inserted Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().first().hasClass('loadit-header')
+        ,'The header should not have been replaced. Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().last().hasClass('loadit-footer')
+        ,'The footer should not have been replaced. Got: ' + element.outerHTML
+    );
+
+    // same tests for appending content
+    $(element).attr('data-loadit-content', 'append');
+
+    $(element).loadit();
+    server.respond();
+
+    // check if content is placed correctly
+    assert.equal(
+        $(element).find('.newcontent').length
+        ,2
+        ,'The element should be inserted Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().first().hasClass('loadit-header')
+        ,'The header should not have been replaced. Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().last().hasClass('loadit-footer')
+        ,'The footer should not have been replaced. Got: ' + element.outerHTML
+    );
+
+    // same tests for prepending content
+    $(element).attr('data-loadit-content', 'append');
+
+    $(element).loadit();
+    server.respond();
+
+    // check if content is placed correctly
+    assert.equal(
+        $(element).find('.newcontent').length
+        ,3
+        ,'The element should be inserted Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().first().hasClass('loadit-header')
+        ,'The header should not have been replaced. Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().last().hasClass('loadit-footer')
+        ,'The footer should not have been replaced. Got: ' + element.outerHTML
+    );
+});
+
+QUnit.test('Test the load more button', function(assert) {
+
+    // initialize fake XMLHttpRequest server using sinon.js
+    var server = this.sandbox.useFakeServer()
+        ,element = document.createElement('DIV');
+
+    // add header and footer to the element
+    $(element).html(
+        '<div class="loadit-header"></div>' +
+        '<div class="loadit-footer"><a href="#" data-class="loadit-morebutton">Load more</a></div>'
+    );
+
+    // setup the response
+    server.respondWith(
+        'GET'                                   // method
+        ,'.'                                    // location
+        ,[200, {'Content-Type': 'text/html'}    // header
+            ,'<p class="newcontent">Content</p>']   // content/body
+    );
+
+    // fire the plugin
+    $(element).loadit();
+
+    // let the server respond
+    server.respond();
+
+    // check if content is placed correctly
+    assert.equal(
+        $(element).find('.newcontent').length
+        ,1
+        ,'The element should be inserted Got: ' + element.outerHTML
+    );
+
+    // click the load more button
+    $(element).loadit('more');
+    server.respond();
+
+    // check if content is placed correctly
+    assert.equal(
+        $(element).find('.newcontent').length
+        ,2
+        ,'The element should be inserted Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().first().hasClass('loadit-header')
+        ,'The header should not have been replaced. Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().last().hasClass('loadit-footer')
+        ,'The footer should not have been replaced. Got: ' + element.outerHTML
     );
 });

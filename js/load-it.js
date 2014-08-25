@@ -21,23 +21,45 @@ LoadItPlugin.prototype.init = function() {
     // Initialize the plugin
 
     // variables
-    var content_placement
-        ,loading_class
-        ,query
+    var loading_class
         ,url;
 
     // get url from the element's url data attribute
     url = this._get_url();
 
-    // get the content placement behaviour
-    content_placement = this._get_content_placement();
+    // get the loading class to apply while waiting for a response and add it to the element
+    loading_class = this._get_loading_class();
+    this.$element.addClass(loading_class);
 
-    // create the GET query string
-    query = this._get_query_string(this);
+    this.load_data(url, loading_class, false);
+};
+
+LoadItPlugin.prototype.load_more = function() {
+
+    // Initialize the plugin
+
+    // variables
+    var loading_class
+        ,url;
+
+    // get url from the element's url data attribute
+    url = this._get_url();
 
     // get the loading class to apply while waiting for a response and add it to the element
     loading_class = this._get_loading_class();
     this.$element.addClass(loading_class);
+
+    this.load_data(url, loading_class, true);
+};
+
+LoadItPlugin.prototype.load_data = function(url, loading_class, loadmore) {
+
+    // loads the actual data
+
+    var query = this._get_query_string(loadmore);
+
+    // get the content placement behaviour
+    var content_placement = this._get_content_placement();
 
     // get the content
     $.ajax({
@@ -45,17 +67,54 @@ LoadItPlugin.prototype.init = function() {
         ,context: this.element
         ,success: function(data) {
 
-            // place the content where defined
-            if (content_placement === 'replace' || !$(this).children().length) {
+            var $header = $(this).find('.loadit-header')
+                ,$footer = $(this).find('.loadit-footer');
+
+            // if there are no children, we can just insert the data
+            if (!$(this).children().length) {
                 $(this).html(data);
-            } else if (content_placement === 'append') {
-                $(data).insertAfter($(this).children().last());
-            } else if (content_placement === 'prepend') {
-                $(data).insertBefore($(this).children().first());
+            } else {
+
+                // if there are children, place the content where defined
+                if (content_placement === 'replace' || !$(this).children().length) {
+
+                    // clear the content
+                    $(this).html('');
+
+                    // append the header again if present
+                    if ($header.length) {
+                        $(this).append($header);
+                    }
+
+                    // append the content
+                    $(this).append($(data));
+
+                    // append the footer again if present
+                    if ($footer.length) {
+                        $(this).append($footer);
+                    }
+
+                } else if (content_placement === 'append') {
+
+                    // insert after the last child, that is not the footer
+                    if ($footer.length) {
+                        $(data).insertBefore($footer);
+                    } else {
+                        $(data).insertAfter($(this).children().last());
+                    }
+                } else if (content_placement === 'prepend') {
+
+                    // insert before the first child, that is not the header
+                    if ($header.length) {
+                        $(data).insertAfter($header);
+                    } else {
+                        $(data).insertBefore($(this).children().not('loadit-header').first());
+                    }
+                }
             }
 
             // remove the loading class again
-            this.removeClass(loading_class);
+            $(this).removeClass(loading_class);
         }
     });
 };
@@ -86,34 +145,48 @@ LoadItPlugin.prototype._get_loading_class = function() {
     return loading_class;
 };
 
-LoadItPlugin.prototype._get_query_string = function() {
+LoadItPlugin.prototype._get_query_string = function(loadmore) {
 
     // create the query string from the elements attributes
 
     var attribute
-        ,attname
+        ,attributes = {}
+        ,key
         ,query = ''
         ,prefix
-        ,value;
+        ,value
+        ,$footer = this.$element.find('.loadit-footer')
+        ,i;
 
-    // iterate over each attribute of the element
-    for (var i = 0; i < this.element.attributes.length; i++) {
+    // iterate over each attribute of the element and save it in the dictionary
+    for (i = 0; i < this.element.attributes.length; i++) {
         attribute = this.element.attributes[i];
+        attributes[attribute.name] = attribute.value;
+    }
 
-        // start the query string with ? and add every additional parameter with &
-        if (query === '') {
-            prefix = '?';
-        } else {
-            prefix = '&';
+    // if loading more, we overwrite the attributes again
+    if (loadmore) {
+        for (i = 0; i < $footer[0].attributes.length; i++) {
+            attribute = $footer[0].attributes[i];
+            attributes[attribute.name] = attribute.value;
         }
+    }
 
-        // if the attribute starts with the plugin default prefix of 'data-load-it',
-        // then add the attribute to the query string
-        if (attribute.name.indexOf(this.DEFAULT_PREFIX) === 0) {
-            attname = attribute.name.slice(this.DEFAULT_PREFIX.length);
-            if (this.EXCLUDED_ATTRIBUTES.indexOf(attname) === -1) {
-                value = encodeURIComponent(attribute.value);
-                query = query + prefix + attname + '=' + value;
+    for (var attname in attributes) {
+        if (attname.indexOf(this.DEFAULT_PREFIX) === 0) {
+            // start the query string with ? and add every additional parameter with &
+            if (query === '') {
+                prefix = '?';
+            } else {
+                prefix = '&';
+            }
+
+            // if the attribute starts with the plugin default prefix of 'data-load-it',
+            // then add the attribute to the query string
+            key = attname.slice(this.DEFAULT_PREFIX.length);
+            if (this.EXCLUDED_ATTRIBUTES.indexOf(key) === -1) {
+                value = encodeURIComponent(attributes[attname]);
+                query = query + prefix + key + '=' + value;
             }
         }
     }
@@ -135,14 +208,22 @@ LoadItPlugin.prototype._get_url = function() {
 };
 
 (function( $ ) {
-    $.fn.loadit = function() {
+    $.fn.loadit = function(action) {
         return this.each(function() {
             var plugin = new LoadItPlugin(this);
-            $.data(this, 'loadit', plugin.init());
+            if (action === 'more') {
+                $.data(this, 'load_more', plugin.load_more());
+            } else {
+                $.data(this, 'loadit', plugin.init());
+            }
         });
     };
     $(document).ready(function() {
         $('[data-class="loadit"]').loadit();
+    });
+    $(document).on('click', '[data-class="loadit-morebutton"]', function(e) {
+        e.preventDefault();
+        $(this).parents('[data-class="loadit"]').loadit('more');
     });
 }( jQuery ));
 
