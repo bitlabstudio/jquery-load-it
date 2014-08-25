@@ -1,5 +1,5 @@
 /*
- * jQuery LoadIt v0.1
+ * jQuery LoadIt v0.2
  *
  * A jQuery plugin that makes post loading content easier.
  *

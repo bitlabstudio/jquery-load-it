@@ -1,5 +1,5 @@
-jQuery LoadIt
-=============
+jQuery LoadIt v0.2
+==================
 
 A jQuery plugin that aims to make post loading of data into already loaded elements easier.
 

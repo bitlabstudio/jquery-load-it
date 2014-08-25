@@ -55,7 +55,7 @@ QUnit.test('Testing the ``_get_query_string`` method.', function(assert) {
     var element = document.createElement('DIV'),
         plugin;
 
-    $(element).html('<div class="loadit-footer" data-loadit-added="differently"></div>')
+    $(element).html('<div class="loadit-footer" data-loadit-added="differently"></div>');
 
     // attributes, that should not be added to the query
     element.setAttribute('data-not-used-element', 'has the wrong format');
@@ -174,7 +174,7 @@ QUnit.test('Test content is fetched and inserted properly', function(assert) {
     assert.ok(
         !$(element).hasClass('loadit-loading')
         ,'The element should no longer have the loading class: ' + element.outerHTML
-    )
+    );
 });
 
 QUnit.test('Test for content that is inserted between header and footer', function(assert) {
