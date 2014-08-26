@@ -269,6 +269,7 @@ QUnit.test('Test the load more button', function(assert) {
         '<div class="loadit-header"></div>' +
         '<div class="loadit-footer"><a href="#" data-class="loadit-morebutton">Load more</a></div>'
     );
+    $(element).attr('data-loadit-content', 'append');
 
     // setup the response
     server.respondWith(
@@ -288,7 +289,7 @@ QUnit.test('Test the load more button', function(assert) {
     assert.equal(
         $(element).find('.newcontent').length
         ,1
-        ,'The element should be inserted Got: ' + element.outerHTML
+        ,'The element should be inserted. Got: ' + element.outerHTML
     );
 
     // click the load more button
@@ -299,7 +300,27 @@ QUnit.test('Test the load more button', function(assert) {
     assert.equal(
         $(element).find('.newcontent').length
         ,2
-        ,'The element should be inserted Got: ' + element.outerHTML
+        ,'The element should be inserted when loading more. Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().first().hasClass('loadit-header')
+        ,'The header should not have been replaced. Got: ' + element.outerHTML
+    );
+    assert.ok(
+        $(element).children().last().hasClass('loadit-footer')
+        ,'The footer should not have been replaced. Got: ' + element.outerHTML
+    );
+
+    // click the load more button while prepending
+    $(element).attr('data-loadit-content', 'prepend');
+    $(element).loadit('more');
+    server.respond();
+
+    // check if content is placed correctly
+    assert.equal(
+        $(element).find('.newcontent').length
+        ,3
+        ,'The element should be inserted when loading more. Got: ' + element.outerHTML
     );
     assert.ok(
         $(element).children().first().hasClass('loadit-header')
