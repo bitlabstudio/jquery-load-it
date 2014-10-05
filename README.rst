@@ -1,23 +1,14 @@
 jQuery LoadIt v0.2
 ==================
 
-A jQuery plugin that aims to make post loading of data into already loaded elements easier.
+A jQuery plugin that aims to make loading data easier.
 
-Loading parts of a page after the big picture can dramatically increase the sensation of a fast loading page.
-Even though the page as a whole is not loaded faster, just giving the impression, that there's some sort of progress
-will provide a far better experience.
+Optimized everything, but still want to squeeze the last bit of speed sensation out of your page?
+Want to load more content on a click of a button?
+Do you want to auto load content on scroll or other events? [still WIP, stay tuned =)]
 
-But this is no excuse to not optimize your data to respond faster in the first place ;)
+Well worry not, dear friend! You've come to the right place!
 
-Wishlist / not sure if it's added or really necessary / not sure when it's added, might be a while:
-
-* inserting / showing animation. E.g. using jQuery slide or fade
-* Populating lists of templates from a json response / populating content from json in general
-  Like when you have a list of avatars, then you may not want to send whole finished templates all the time. It would
-  be easier and probably faster to not have the backend render everything if the general layout and template is already
-  present. We could just get back a JSON response with  the image URLs and fill them in.
-* success / launch callbacks
-* Loading triggers: Automatically reload on a certain action / if a certain input gets changed / scroll / hover / click
 
 Basic Usage
 -----------
@@ -39,6 +30,13 @@ However you cannot use 'url', 'loading-class' or 'content' since these are used 
 
     <div data-class="loadit" data-loadit-foo="bar" data-loadit-url="/url/"></div>
 
+
+This basic setup will, once the page is ready, load the rest of the content into the defined ``div``.
+
+**Django users hint:** Check out django-libs_. It has an ``AjaxResponseMixin``, that lets you easily handle ajax and
+non-ajax responses for each of your views, just by adding the mixin and creating an ajax variant of your view template.
+
+.. _django-libs: https://github.com/bitmazk/django-libs
 
 All data attribute options
 ++++++++++++++++++++++++++
