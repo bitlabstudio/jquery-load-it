@@ -50,32 +50,11 @@ Default: 'replace'
 can add your own custom style for loading animations. Default: 'loadit-loading'
 
 
-Header and footer
-+++++++++++++++++
-
-If you want, you can define a header and a footer, that will not be replaced when the content is inserted. A header will
-always remain on top of the element, even if the content is prepended. Same behaviour applies to the footer and
-appending.
-
-An example markup could be:
-
-.. code-block:: html
-
-    <div data-class="loadit" data-loadit-url="/mysupercontent/">
-        <div class="loadit-header">
-            <h1>My header headline that will stay on top</h1>
-        </div>
-
-        <!-- Here will the content go -->
-
-        <div class="loadit-footer">
-            <p>This is my super footer text, that will not be replaced.</p>
-        </div>
-    </div>
-
-
 Load more buttons
 +++++++++++++++++
+
+**Important Note!** ``loadit-header`` and ``loadit-footer`` will soon be removed again. Just did turn out to be quite
+useless in the end.
 
 You can add a load more button to your footer, that will post to the same view where the content was fetched before, but
 with the addition of sending extra parameters to the view. These extra parameters are defined on the footer element, the
@@ -93,13 +72,11 @@ This could look something like:
 .. code-block:: html
 
     <div data-class="loadit" data-loadit-url="/mysupercontent/" data-loadit-myarg="myval" data-loadit-content="append">
-        <div class="loadit-header">
-            <h1>My header headline that will stay on top</h1>
-        </div>
 
         <!-- Here will the content go -->
 
         <div class="loadit-footer" data-loadit-myarg="overwritten">
+            <!-- This will soon work without the footer and just the button alone. -->
             <a href="#" data-class"loadit-morebutton">Load more</a>
         </div>
     </div>
