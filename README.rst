@@ -10,6 +10,13 @@ Do you want to auto load content on scroll or other events? [still WIP, stay tun
 Well worry not, dear friend! You've come to the right place!
 
 
+Examples
+--------
+
+Check the example at `the project page
+<https://bitmazk.github.io/jquery-load-it/>`_.
+
+
 Basic Usage
 -----------
 
