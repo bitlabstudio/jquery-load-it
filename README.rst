@@ -4,7 +4,9 @@ jQuery LoadIt v0.2
 A jQuery plugin that aims to make loading data easier.
 
 Optimized everything, but still want to squeeze the last bit of speed sensation out of your page?
+
 Want to load more content on a click of a button?
+
 Do you want to auto load content on scroll or other events? [still WIP, stay tuned =)]
 
 Well worry not, dear friend! You've come to the right place!
