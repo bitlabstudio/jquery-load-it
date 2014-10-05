@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>jQuery LoadIt</title>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="libs/sinon-1.10.3.js"></script>
+    <script src="js/load-it.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .loadit-demo {
+            height: 100px;
+            width: 100px;
+        }
+        .loadit-loading {
+            background: #999999;
+        }
+        .padding-top {
+            padding-top: 30px;
+        }
+        .masthead {
+            background: -webkit-linear-gradient(#231d2f, #421f48);
+            background: -o-linear-gradient(#231d2f, #421f48);
+            background: -moz-linear-gradient(#231d2f, #421f48);
+            background: linear-gradient(#231d2f, #421f48);
+            text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1);
+            color: white;
+            text-align: center;
+            min-height: 300px;
+            padding-top: 80px;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-default" role="banner" style="margin-bottom: 0;">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">jQuery LoadIt</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="#simple-example">Simple example</a></li>
+                    <li><a href="#insertion">Insertion behaviour</a></li>
+                    <li><a href="#loadmore">The load more button</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="text-muted"> created by
+                        <a href="http://bitmazk.com/" target="_blank" style="display: inline-block;">
+                            <img src="img/bitmazklogo.png" alt="bitmazk" style="position: absolute; top: 8px; left: 0; height: 30px;" />
+                        </a>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </header>
+    <main role="main" class="col-md-12 masthead">
+        <h1 style="font-size: 48px;">jQuery LoadIt</h1>
+        <p style="font-size: 19px;">The easy way to load your content.</p>
+    </main>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 padding-top">
+                <div id="demo1">
+                    DEMO 1
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h1>DEMO PAGE IS SOON READY, I PROMISE!</h1>
+                <h2 id="simple-example">Simple example</h2>
+                <p>Here we just load content in a div.</p>
+                <p>Content, that takes a bit to process, can be loaded after the main page. This gives the impression of a faster web page.</p>
+            </div>
+            <div class="col-md-3 padding-top">
+                <div id="demo2-replace">
+                    DEMO 2 replace
+                </div>
+                <div id="demo2-append">
+                    DEMO 2 append
+                </div>
+                <div id="demo2-prepend">
+                    DEMO 2 prepend
+                </div>
+                <div id="demo3">
+                    DEMO 3 append
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h2 id="insertion">Insertion behavior</h2>
+                <p>You can control how the content, that is responded by the server, is inserted in your element.</p>
+                <p>You can either replace existing content or insert it before or after the content.</p>
+            </div>
+            <div class="col-md-3 padding-top">
+                <div id="demo4">
+                    DEMO 4
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h2 id="loadmore">The load more button</h2>
+                <p>If you only fetch parts of your data each time, you can create a load more button, so the user can fetch additional content.</p>
+                <p>This content will follow the same insertion behavior as the parent element.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+<div data-class="loadit-demo" class="loadit-demo"></div>
+<div><a href="" class="init">Init LoadIt</a></div>
+<script>
+    var fakeserver = sinon.sandbox.useFakeServer();
+    var content = '<p class="newcontent">Content</p>';
+    fakeserver.respondWith(
+            'GET', '.', [200, {'Content-Type': 'text/html'}, content]
+    );
+
+    $('.init').click(function(e) {
+        e.preventDefault();
+        $('[data-class="loadit-demo"]').loadit();
+        setTimeout(
+            function() {
+                fakeserver.respond()
+            }
+            ,1000
+        )
+    });
+</script>
+<!--
+    var loaded = false;
+    $(document).on('scroll', function() {
+        var doctop = $(window).scrollTop();
+        var docbottom = doctop + $(window).height();
+        var etop = $('.scrollme').offset().top;
+        if (etop < docbottom && !loaded) {
+            loaded = true;
+            alert('foo');
+        }
+    })
+-->
+</html>
