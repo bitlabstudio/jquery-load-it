@@ -5,26 +5,48 @@
     <title>jQuery LoadIt</title>
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="libs/sinon-1.10.3.js"></script>
-    <script src="js/load-it.min.js"></script>
+    <script src="/test/libs/sinon-1.10.3.js"></script>
+    <script src="/test/libs/vkbeautify.js"></script>
+    <script src="/js/load-it.min.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .loadit-demo {
-            height: 100px;
-            width: 100px;
+        .codepanel {
+            background-color: #EEEEEE;
+            padding: 0 10px;
         }
+
+        .code {
+            font-family: "Courier", serif;
+            font-weight: 700;
+            color: #555555;
+            padding: 4px;
+            margin: 0;
+            overflow: auto;
+            line-height: 1.45;
+            background-color: #EEEEEE;
+            border-radius: 3px;
+            border: 1px solid #EEEEEE;
+        }
+
+        h3 {
+            font-size: 20px;
+        }
+
         .loadit-loading {
-            background: #999999;
+            min-height: 30px;
+            background: url('/img/ajax-loader.gif') no-repeat;
         }
+
         .padding-top {
             padding-top: 30px;
         }
+
         .masthead {
             background: -webkit-linear-gradient(#231d2f, #421f48);
             background: -o-linear-gradient(#231d2f, #421f48);
             background: -moz-linear-gradient(#231d2f, #421f48);
             background: linear-gradient(#231d2f, #421f48);
-            text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
             color: white;
             text-align: center;
             min-height: 300px;
@@ -33,103 +55,300 @@
     </style>
 </head>
 <body>
-    <header class="navbar navbar-default" role="banner" style="margin-bottom: 0;">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">jQuery LoadIt</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li><a href="#simple-example">Simple example</a></li>
-                    <li><a href="#insertion">Insertion behaviour</a></li>
-                    <li><a href="#loadmore">The load more button</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="text-muted"> created by
-                        <a href="http://bitmazk.com/" target="_blank" style="display: inline-block;">
-                            <img src="img/bitmazklogo.png" alt="bitmazk" style="position: absolute; top: 8px; left: 0; height: 30px;" />
-                        </a>
-                    </li>
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </header>
-    <main role="main" class="col-md-12 masthead">
-        <h1 style="font-size: 48px;">jQuery LoadIt</h1>
-        <p style="font-size: 19px;">The easy way to load your content.</p>
-    </main>
+<header class="navbar navbar-default" role="banner" style="margin-bottom: 0;">
     <div class="container">
-        <div class="row">
-            <div class="col-md-3 padding-top">
-                <div id="demo1">
-                    DEMO 1
-                </div>
-            </div>
-            <div class="col-md-9">
-                <h1>DEMO PAGE IS SOON READY, I PROMISE!</h1>
-                <h2 id="simple-example">Simple example</h2>
-                <p>Here we just load content in a div.</p>
-                <p>Content, that takes a bit to process, can be loaded after the main page. This gives the impression of a faster web page.</p>
-            </div>
-            <div class="col-md-3 padding-top">
-                <div id="demo2-replace">
-                    DEMO 2 replace
-                </div>
-                <div id="demo2-append">
-                    DEMO 2 append
-                </div>
-                <div id="demo2-prepend">
-                    DEMO 2 prepend
-                </div>
-                <div id="demo3">
-                    DEMO 3 append
-                </div>
-            </div>
-            <div class="col-md-9">
-                <h2 id="insertion">Insertion behavior</h2>
-                <p>You can control how the content, that is responded by the server, is inserted in your element.</p>
-                <p>You can either replace existing content or insert it before or after the content.</p>
-            </div>
-            <div class="col-md-3 padding-top">
-                <div id="demo4">
-                    DEMO 4
-                </div>
-            </div>
-            <div class="col-md-9">
-                <h2 id="loadmore">The load more button</h2>
-                <p>If you only fetch parts of your data each time, you can create a load more button, so the user can fetch additional content.</p>
-                <p>This content will follow the same insertion behavior as the parent element.</p>
-            </div>
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">jQuery LoadIt</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="#simple-example">Simple example</a></li>
+                <li><a href="#insertion">Insertion behaviour</a></li>
+                <li><a href="#loadmore">The load more button</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="text-muted"> created by
+                    <a href="http://bitmazk.com/" target="_blank" style="display: inline-block;">
+                        <img src="img/bitmazklogo.png" alt="bitmazk"
+                             style="position: absolute; top: 8px; left: 0; height: 30px;"/>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</header>
+<main role="main" class="col-md-12 masthead">
+    <h1 style="font-size: 48px;">jQuery LoadIt</h1>
+
+    <p style="font-size: 19px;">The easy way to load your content.</p>
+</main>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Introduction</h2>
+
+            <p>
+                As you click through the demos, you will also see how the html markup will change, so you can make
+                yourself an image of how the plugin actually manipulates your html.
+            </p>
+
+            <p>
+                Note, that all the demos are delayed to show the class changes during load. Also most of the
+                features would automatically load, when the page loads, but you wouldn't be able to go through it step
+                by step then ;)
+            </p>
+
+            <p>
+                Also note, that the <span class="code">data-class="loadit-demoX"</span> attribute would usually only be
+                called <span class="code">data-class="loadit"</span> to initialize the plugin automagically.
+            </p>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 id="simple-example">Simple example</h2>
+
+            <p>Here we just load content into a div.</p>
+
+            <p>
+                Content, that takes a bit to process, can be loaded after the main page. This gives the impression of a
+                faster web page at the cost of an extra request.
+            </p>
+            <p>
+                Take a look at the live preview of the html. The ajax loading spinner is added by the
+                <span class="code">loadit-loading</span> class, that I just gave this basics styling. You can add
+                styles to provide any kind of loading animation.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Demo</h3>
+
+            <div data-class="demo" class="well" id="demo1">
+                <a href="#" class="btn btn-default btn-xs" data-class="loadit-demo-a">Click me!</a>
+
+                <div data-class="loadit-demo1" data-loadit-url=".">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h3>Live markup</h3>
+            <pre class="well codepanel" data-class="loadit-demo1-markup">
+            </pre>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>How it's done</h4>
+
+            <p>The markup for this one is really simple.</p>
+
+            <pre class="well codepanel">
+                <div data-class="loadit" data-loadit-url="/path/to/my/url/"></div>
+            </pre>
+
+            <p>
+                That's it. LoadIt will automatically get the content from <span class="code">/path/to/my/url/</span> and
+                place it inside the <span class="code">div</span>.
+            </p>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 id="insertion">Insertion behavior</h2>
+
+            <p>You can control how the content, that is responded by the server, is inserted in your element.</p>
+
+            <p>You can either replace existing content or insert the response before or after the content.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Demo</h3>
+
+            <div data-class="demo" class="well" id="demo2">
+                <a href="#" class="btn btn-default btn-xs" data-class="loadit-demo-a">click me!</a>
+
+                <div data-class="loadit-demo2" data-loadit-url=".">
+                    <p>This content will get replaced. the default insertion behaviour is <span class="code">data-loadit-content="replace"</span>.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h3>Live markup</h3>
+            <pre class="well codepanel" data-class="loadit-demo2-markup"></pre>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div data-class="demo" class="well" id="demo3">
+                <a href="#" class="btn btn-default btn-xs" data-class="loadit-demo-a">click me!</a>
+
+                <div data-class="loadit-demo3" data-loadit-url="." data-loadit-content="append">
+                    <p>This content will remain if you set the insertion behaviour to <span class="code">data-loadit-content="append"</span>.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <pre class="well codepanel" data-class="loadit-demo3-markup"></pre>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div data-class="demo" class="well" id="demo4">
+                <a href="#" class="btn btn-default btn-xs" data-class="loadit-demo-a">click me!</a>
+
+                <div data-class="loadit-demo4" data-loadit-url="." data-loadit-content="prepend">
+                    <p>This content will remain if you set the insertion behaviour to <span class="code">data-loadit-content="prepend"</span>.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <pre class="well codepanel" data-class="loadit-demo4-markup"></pre>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>How it's done</h4>
+            <p>
+                You only add one of the three possible choices for <span class="code">data-loadit-content</span>,
+                which are <span class="code">replace</span>, <span class="code">append</span> and
+                <span class="code">prepend</span>. That would make it look something like this.
+            </p>
+            <pre class="well codepanel">
+                <div data-class="loadit" data-loadit-url="/path/to/my/url/" data-loadit-content="append"></div>
+            </pre>
+
+            <p>
+                That's it. LoadIt will automatically get the content from <span class="code">/path/to/my/url/</span> and
+                place it inside the <span class="code">div</span>, but after all the other content inside the div.
+            </p>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+            <h2 id="loadmore">The load more button</h2>
+
+            <p>If you only fetch parts of your data each time, you can create a load more button, so the user can fetch
+                additional content.</p>
+
+            <p>This content will follow the same insertion behavior as the parent element.</p>
+
+            <p class="alert alert-info">
+                <strong>TODO:</strong> Explain the args overwriting of the load more button
+            </p>
+
+            <p class="alert alert-danger">
+                There's currently some work done on the load more button. Quite essential parts will change.
+                Stay tuned about updates regarding this feature.
+            </p>
+        </div>
+    </div>
+    <!--<div class="row">-->
+        <!--<div class="col-md-4">-->
+            <!--<div data-class="demo" class="well" id="demo5">-->
+                <!--<a href="#" class="btn btn-default btn-xs" data-class="loadit-demo-a">click me!</a>-->
+
+                <!--<div data-class="loadit-demo5" data-loadit-url="." data-loadit-content="append">-->
+                    <!--<p>Each time you click on the load more button, it will load one extra dataset from the server.</p>-->
+                    <!--<div class="loadit-footer">-->
+                        <!--<a href="#" class="btn btn-default btn-xs" data-class="loadit-morebutton">Load more</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-8">-->
+            <!--<pre class="well codepanel" data-class="loadit-demo5-markup"></pre>-->
+        <!--</div>-->
+    </div>
+</div>
 </body>
 
-<div data-class="loadit-demo" class="loadit-demo"></div>
-<div><a href="" class="init">Init LoadIt</a></div>
 <script>
-    var fakeserver = sinon.sandbox.useFakeServer();
-    var content = '<p class="newcontent">Content</p>';
-    fakeserver.respondWith(
-            'GET', '.', [200, {'Content-Type': 'text/html'}, content]
-    );
+    var fakeserver, loadmore, responses;
 
-    $('.init').click(function(e) {
+    fakeserver = sinon.sandbox.useFakeServer();
+    loadmore = [
+        'response1',
+        'response2',
+        'response3',
+        'response4',
+        'response5',
+        'response6'
+    ];
+    responses = {
+        'demo1': '<p class="newcontent">Content was loaded!!</p>',
+        'demo2': '<p class="newcontent">This content replaced, what was here before.</p>',
+        'demo3': '<p class="newcontent">This content was appended.</p>',
+        'demo4': '<p class="newcontent">This content was prepended.</p>',
+        'demo5': ''
+    };
+
+    $('[data-class="loadit-demo-a"]').click(function (e) {
+        var content;
+
+        content = responses[this.parentNode.id];
+
+        fakeserver.respondWith(
+                'GET', '.', [200, {'Content-Type': 'text/html'}, content]
+        );
         e.preventDefault();
-        $('[data-class="loadit-demo"]').loadit();
+        $('[data-class="loadit-' + this.parentNode.id + '"]').loadit();
         setTimeout(
-            function() {
-                fakeserver.respond()
-            }
-            ,1000
+                function () {
+                    fakeserver.respond()
+                }
+                , 1000
+        )
+    });
+    $(document).ready(function () {
+        $('.codepanel').each(function () {
+            $(this).find('.loadit-loading').removeAttr('class');
+            $(this).text(vkbeautify.xml($(this).html()));
+        });
+        $('[data-class="demo"]').each(function () {
+            var codepanel_class;
+            codepanel_class = '[data-class="loadit-' + this.id + '-markup"]';
+            $(codepanel_class).text(vkbeautify.xml($(this).html()));
+        });
+    });
+    $(document).on('DOMSubtreeModified', '[data-class="demo"]', function () {
+        var codepanel_class;
+        codepanel_class = '[data-class="loadit-' + this.id + '-markup"]';
+        $(codepanel_class).text(vkbeautify.xml($(this).html()));
+
+    });
+    $(document).on('click', '[data-class="loadit-morebutton"]', function(e) {
+        e.preventDefault();
+        var content = loadmore.shift();
+        console.log(content);
+        fakeserver.respondWith(
+                'GET', '.', [200, {'Content-Type': 'text/html'}, content]
+        );
+        $(this).parents('[data-class="loadit-demo5"]').loadit('more');
+        setTimeout(
+                function () {
+                    fakeserver.respond()
+                }
+                , 1000
         )
     });
 </script>
